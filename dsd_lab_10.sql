@@ -123,3 +123,66 @@ SELECT
     JOIN courses c on s.stu_course = c.course_id
 GROUP BY c.course_name   -- group with any that have the same course name
 ORDER BY MAX(c.course_id) DESC;
+
+
+--For each librarian (name and last name), what is the earliest loan date they have processed?
+
+SELECT 
+    CONCAT_WS(' ', li.lib_name, li.lib_last_name) as "Librarians Name",
+    MAX(l.loan_date) as "Earliest loan date"
+    FROM loans l 
+    JOIN Librarians li on l.lib_id = li.lib_id
+GROUP BY li.lib_name, li.lib_last_name
+ORDER BY MAX(l.loan_date) ASC;
+
+--For each genre, what's the average number of pages for the books? List them in alphabetical order. Can you round to nearest integer?
+
+SELECT 
+    genre_name AS "Genre",
+    ROUND(AVG(book_pages), 0) AS "Average number of pages" --dont seperate or the terminal complains
+    FROM Books JOIN Genres on books.genre_id = genres.genre_id
+GROUP BY genre_name
+ORDER BY genre_name ASC;
+
+--What is the average number of days books are loaned for each genre?
+--There are 8 genres in total - if you did the query correctly using inner joins, you will have only 6 genres returned. 
+--Can you explain why do you give only 6 returns?
+
+
+SELECT 
+    genre_name AS "Genre",
+    ROUND(AVG(loan_date - return_date), 0) AS "Number of days booked out" --dont seperate or the terminal complains
+    FROM books_inventory bi 
+    INNER JOIN loans l on bi.inv_id = l.inv_id 
+    INNER JOIN books b on b.book_id = bi.book_id
+    INNER JOIN genres g on b.genre_id = g.genre_id
+WHERE l.status = 'Returned' --works as a temporary fix
+GROUP BY g.genre_name;  -- for some reason there is an empty row
+
+SELECT 
+    genre_name AS "genre_name", 
+    count(b.book_id) as "Number of books in genre"
+    FROM Books b
+    JOIN Genres g on b.genre_id = g.genre_id
+GROUP BY genre_name
+ORDER BY genre_name ASC;
+
+ -- run this there are 8 genres booked out
+
+SELECT * FROM genres;
+
+-- there are 9 genres yet short story has no book 
+
+-- best guess either there are genres with no books assigned eg(short story) and there are books loaned out that have yet to be returned
+-- run a check on books loaned that are action
+
+SELECT 
+    g.genre_name AS "Genre",
+    l.status as "Status"
+    FROM books_inventory bi 
+    INNER JOIN loans l on bi.inv_id = l.inv_id 
+    INNER JOIN books b on b.book_id = bi.book_id
+    INNER JOIN genres g on b.genre_id = g.genre_id
+WHERE g.genre_name = 'Action'
+GROUP BY g.genre_name, l.status;  
+-- this confirms one action book is borrowed and yet to be returned
