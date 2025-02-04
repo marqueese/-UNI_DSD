@@ -152,7 +152,3 @@ CREATE TABLE spare_parts_inventory(
     supplier VARCHAR(50)
     FOREIGN KEY (dpt_id) REFERENCES departments(dpt_id)
 );
-
-
-INSERT INTO spare_parts_inventory (part_name, description, quantity, unit_price, supplier)
-VALUES('Catalytic converter', 'Good for stealing in florida', '7', '32.30','Florida man steve');
