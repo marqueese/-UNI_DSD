@@ -19,10 +19,13 @@ CREATE TABLE service_appointments(
     appt_id SERIAL PRIMARY KEY,
     cust_id INT, 
     status_id INT,
+    report_id INT,
     start_date DATE NOT NULL DEFAULT CURRENT_TIMESTAMP, 
     end_date DATE NOT NULL CHECK(end_date> start_date),
     FOREIGN KEY (cust_id) REFERENCES customers(cust_id),
-    FOREIGN KEY (status_id) REFERENCES appointment_status(status_id)
+    FOREIGN KEY (status_id) REFERENCES appointment_status(status_id),
+    FOREIGN KEY (report_id) REFERENCES service_reports(report_id),
+
 );
 
 CREATE TABLE vehicle_details(
@@ -109,21 +112,23 @@ CREATE TABLE services(
     srv_det_id INT, 
     appt_id INT, 
     report_id INT, 
+    staff_id INT
     FOREIGN KEY (srv_det_id) REFERENCES service_details(srv_det_id),
     FOREIGN KEY (appt_id) REFERENCES service_appointments(appt_id),
-    FOREIGN KEY (report_id) REFERENCES service_reports(report_id)
+    FOREIGN KEY (report_id) REFERENCES service_reports(report_id),
+    FOREIGN KEY (staff_id) REFERENCES staff(staff_id),
 );
 
 CREATE TABLE installment_plans(
     plan_id SERIAL PRIMARY KEY, 
     cust_id INT, 
-    srv_id INT, 
+    appt_id INT, 
     installment_count INT NOT NULL, 
     installment_ammount DECIMAL(10, 2) NOT NULL, 
     interest_rate DECIMAL(5, 2) NOT NULL DEFAULT 0, 
     date_created DATE NOT NULL DEFAULT CURRENT_TIMESTAMP, 
     FOREIGN KEY (cust_id) REFERENCES customers(cust_id),
-    FOREIGN KEY (srv_id) REFERENCES services(srv_id)
+    FOREIGN KEY (srv_id) REFERENCES service_appointments(appt_id)
 );
 
 CREATE TABLE spare_parts_inventory(
