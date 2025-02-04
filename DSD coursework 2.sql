@@ -2,10 +2,16 @@ DSD coursework 2
 
 CREATE TABLE customers (
     cust_id SERIAL PRIMARY KEY, 
-    cust_name VARCHAR(50) NOT NULL, 
+    cust_personal_number UNIQUE VARCHAR(15)NOT NULL ,
+    cust_business_number UNIQUE VARCHAR(15),
+    cust_personal_email  VARCHAR(150) UNIQUE NOT NULL,
+    cust_business_email  VARCHAR(150) UNIQUE,
+    cust_first_name VARCHAR(50) NOT NULL, 
     cust_last_name VARCHAR(50) NOT NULL, 
-    cust_email  VARCHAR(150) UNIQUE NOT NULL,
-    cust_phone  VARCHAR(15) UNIQUE NOT NULL
+    cust_adds_1 VARCHAR(30) NOT NULL,
+    cust_adds_2 VARCHAR(30),
+    cust_city VARCHAR(30) NOT NULL, 
+    cust_postcode VARCHAR(10) NOT NULL
 );
 
 CREATE TYPE status_enum AS ENUM('Completed','In Progress','Not Started', 'Unable To Complete');
@@ -41,19 +47,25 @@ CREATE TABLE vehicle_details(
 CREATE TABLE customer_feedback(
     feedback_id SERIAL PRIMARY KEY, 
     appt_id INT,
-    rating INT CHECK (rating > 0 AND rating < 6) NOT NULL,
+    cust_id INT,
+    rating INT CHECK (rating >= 0 AND rating <= 5) NOT NULL,
     comments VARCHAR(255) NOT NULL, 
-    FOREIGN KEY (appt_id) REFERENCES service_appointments(appt_id)
+    FOREIGN KEY (appt_id) REFERENCES service_appointments(appt_id),
+    FOREIGN KEY (cust_id) REFERENCES customers(cust_id)
 );
 
 CREATE TABLE staff(
-    staff_id SERIAL PRIMARY KEY,
-    first_name VARCHAR(50) NOT NULL,
-    last_name VARCHAR(50) NOT NULL,
-    email_address VARCHAR(150) UNIQUE NOT NULL,
-    phone_number VARCHAR(15) UNIQUE NOT NULL,
-    salary DECIMAL(10, 2) NOT NULL  CHECK(salary > 7.55), 
-    join_date DATE NOT NULL DEFAULT CURRENT_TIMESTAMP
+    staff_id SERIAL PRIMARY KEY, 
+    staff_first_name VARCHAR(50) NOT NULL, 
+    staff_last_name VARCHAR(50) NOT NULL, 
+    staff_number  VARCHAR(15)UNIQUE NOT NULL ,
+    staff_email  VARCHAR(150) UNIQUE NOT NULL,
+    staff_adds_1 VARCHAR(30) NOT NULL,
+    staff_adds_2 VARCHAR(30),
+    staff_city VARCHAR(30) NOT NULL, 
+    staff_postcode VARCHAR(10) NOT NULL,
+    staff_ni_number VARCHAR(9) UNIQUE NOT NULL,
+    staff_join_date DATE NOT NULL
 );
 
 CREATE TYPE technician_enum AS  ENUM('Available', 'Unavailable');
@@ -70,12 +82,12 @@ CREATE TABLE technician_availability(
     FOREIGN KEY (staff_id) REFERENCES staff(staff_id)
 );
 
-CREATE TYPE departments_enum AS ENUM('Service','Operational');
+CREATE TYPE departments_enum AS ENUM('Service','Operational'); --needs looking into
 
 CREATE TABLE departments(
     dpt_id SERIAL PRIMARY KEY, 
-    name VARCHAR(50) NOT NULL, 
-    type departments_enum
+    dpt_name VARCHAR(50) NOT NULL, 
+    dpt_type departments_enum NOT NULL
 );
 
 CREATE TABLE department_staff(
@@ -89,33 +101,32 @@ CREATE TABLE department_staff(
 
 CREATE TABLE service_details(
     srv_det_id SERIAL PRIMARY KEY, 
-    dpt_id INT,
-    name VARCHAR(50) NOT NULL, 
-    description VARCHAR(150) NOT NULL, 
+    srv_id INT,
+    service_name VARCHAR(50) NOT NULL, 
+    description VARCHAR(255) NOT NULL, 
     price DECIMAL(10, 2) CHECK (price>0) NOT NULL, 
-    FOREIGN KEY (dpt_id) REFERENCES departments(dpt_id)
+    FOREIGN KEY (srv_id) REFERENCES services(srv_id)
 );
 
 CREATE TABLE service_reports(
     report_id SERIAL PRIMARY KEY, 
     veh_id INT, 
-    staff_id INT, 
+    srv_id INT,
+    appt_id INT,
     report_date DATE NOT NULL DEFAULT CURRENT_TIMESTAMP, 
     issues_found VARCHAR(255) NOT NULL, 
     actions_taken VARCHAR(255) NOT NULL,
-    FOREIGN KEY (staff_id) REFERENCES staff(staff_id),
-    FOREIGN KEY (veh_id) REFERENCES vehicle_details(veh_id)
+    FOREIGN KEY (srv_id) REFERENCES services(srv_id),
+    FOREIGN KEY (veh_id) REFERENCES vehicle_details(veh_id),
+    FOREIGN KEY (appt_id) REFERENCES service_appointments(appt_id)
+
 );
 
 CREATE TABLE services(
     srv_id SERIAL PRIMARY KEY, 
-    srv_det_id INT, 
     appt_id INT, 
-    report_id INT, 
-    staff_id INT
-    FOREIGN KEY (srv_det_id) REFERENCES service_details(srv_det_id),
+    staff_id INT, 
     FOREIGN KEY (appt_id) REFERENCES service_appointments(appt_id),
-    FOREIGN KEY (report_id) REFERENCES service_reports(report_id),
     FOREIGN KEY (staff_id) REFERENCES staff(staff_id),
 );
 
@@ -128,16 +139,18 @@ CREATE TABLE installment_plans(
     interest_rate DECIMAL(5, 2) NOT NULL DEFAULT 0, 
     date_created DATE NOT NULL DEFAULT CURRENT_TIMESTAMP, 
     FOREIGN KEY (cust_id) REFERENCES customers(cust_id),
-    FOREIGN KEY (srv_id) REFERENCES service_appointments(appt_id)
+    FOREIGN KEY (appt_id) REFERENCES service_appointments(appt_id)
 );
 
 CREATE TABLE spare_parts_inventory(
     part_id SERIAL PRIMARY KEY, 
+    dpt_id INT,
     part_name VARCHAR(100) NOT NULL, 
     description VARCHAR(255) NOT NULL, 
     quantity INT NOT NULL CHECK (quantity>0) DEFAULT 0, 
     unit_price DECIMAL(10, 2),
     supplier VARCHAR(50)
+    FOREIGN KEY (dpt_id) REFERENCES departments(dpt_id)
 );
 
 
