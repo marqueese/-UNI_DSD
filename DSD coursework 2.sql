@@ -1,3 +1,17 @@
+/*
+ views are already made there are 7 in total
+
+ public | average_installment_amount | view |
+ public | completed_appointments     | view |
+ public | customer_rating            | view |
+ public | most_expensive_service     | view | 
+ public | service_information        | view |
+ public | staff_info                 | view | 
+ public | total_appointments         | view | 
+
+ 
+*/
+
 CREATE TABLE customer(
     cust_id SERIAL PRIMARY KEY,
     cust_personal_number  VARCHAR(15) UNIQUE NOT NULL,
@@ -331,8 +345,6 @@ VALUES
     (6, 'Paper', 50, 10.00, 'dunder mifflin');
 
 
-
-
 --Queries
 
 -- select customer name, car make and model, service type and 
@@ -384,6 +396,52 @@ CREATE VIEW customer_rating AS
 SELECT
     CONCAT_WS(' ', c.cust_first_name, c.cust_last_name) as "Customer Name",
     cf.comments AS "Customer Comment", 
+    cf.rating AS "Customer Rating"
+FROM customer c
+    JOIN customer_feedback cf ON c.cust_id = cf.cust_id;
+    
+-- select the most expensive service
+CREATE VIEW most_expensive_service AS
+SELECT 
+    CONCAT_WS(' ', c.cust_first_name, c.cust_last_name) as "Customer Name",
+    sdet.service_name AS "Service Name",
+    sdet.price AS "Service Price"
+FROM customer c
+    JOIN service_appointment sa ON c.cust_id = sa.cust_id
+    JOIN services s ON sa.appt_id = s.appt_id
+    JOIN service_details sdet ON s.srv_id = sdet.srv_id
+ORDER BY sdet.price DESC
+LIMIT 1;
 
+-- select the average installment amount for each department
+CREATE VIEW average_installment_amount AS
+SELECT
+    d.dpt_name AS "Department Name",
+    ROUND(AVG(i.installment_ammount)) AS "Average Installment Amount"
+FROM department d
+    JOIN department_staff ds ON d.dpt_id = ds.dpt_id
+    JOIN staff s ON ds.staff_id = s.staff_id
+    JOIN services ser ON s.staff_id = ser.staff_id
+    JOIN service_appointment sa ON ser.appt_id = sa.appt_id
+    JOIN installment_plan i ON sa.appt_id = i.appt_id
+GROUP BY d.dpt_name;
 
+-- select the total number of appointments for each department
+CREATE VIEW total_appointments AS
+SELECT
+    d.dpt_name AS "Department Name",
+    COUNT(sa.appt_id) AS "Total Appointments"
+    FROM department d
+        JOIN department_staff ds ON d.dpt_id = ds.dpt_id
+        JOIN staff s ON ds.staff_id = s.staff_id
+        JOIN services ser ON s.staff_id = ser.staff_id
+        JOIN service_appointment sa ON ser.appt_id = sa.appt_id
+GROUP BY d.dpt_name;
+
+--create indexes 
+CREATE INDEX idx_cust_id ON customer(cust_id);
+CREATE INDEX idx_appt_id ON service_appointment(appt_id);
+CREATE INDEX idx_staff_id ON staff(staff_id);
+CREATE INDEX idx_dpt_id ON department(dpt_id);
+CREATE INDEX idx_srv_id ON services(srv_id);
 
