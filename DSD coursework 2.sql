@@ -1,5 +1,5 @@
 /*
- views are already made there are 7 in total
+ views have been made in advance, there are 7 in total
 
  public | average_installment_amount | view |
  public | completed_appointments     | view |
@@ -9,7 +9,6 @@
  public | staff_info                 | view | 
  public | total_appointments         | view | 
 
- 
 */
 
 CREATE TABLE customer(
@@ -346,7 +345,6 @@ VALUES
 
 
 --Queries
-
 -- select customer name, car make and model, service type and 
 CREATE VIEW service_information AS
 SELECT 
@@ -360,6 +358,7 @@ FROM
     JOIN services s ON s.srv_id = sr.srv_id
     JOIN department_staff ds ON ds.staff_id = s.staff_id
     JOIN department d ON d.dpt_id = ds.dpt_id;
+
 
 -- Select all completed appointments
 CREATE VIEW completed_appointments AS
@@ -375,6 +374,7 @@ FROM customer c
     JOIN installment_plan i ON c.cust_id = i.cust_id
     JOIN service_appointment sa ON sa.cust_id = i.cust_id
     JOIN appointment_status s ON s.status_id = sa.status_id;
+
 
 -- staff name and department 
 CREATE VIEW staff_info AS
@@ -400,6 +400,7 @@ SELECT
 FROM customer c
     JOIN customer_feedback cf ON c.cust_id = cf.cust_id;
     
+
 -- select the most expensive service
 CREATE VIEW most_expensive_service AS
 SELECT 
@@ -412,6 +413,7 @@ FROM customer c
     JOIN service_details sdet ON s.srv_id = sdet.srv_id
 ORDER BY sdet.price DESC
 LIMIT 1;
+
 
 -- select the average installment amount for each department
 CREATE VIEW average_installment_amount AS
@@ -426,6 +428,7 @@ FROM department d
     JOIN installment_plan i ON sa.appt_id = i.appt_id
 GROUP BY d.dpt_name;
 
+
 -- select the total number of appointments for each department
 CREATE VIEW total_appointments AS
 SELECT
@@ -437,6 +440,7 @@ SELECT
         JOIN services ser ON s.staff_id = ser.staff_id
         JOIN service_appointment sa ON ser.appt_id = sa.appt_id
 GROUP BY d.dpt_name;
+
 
 --create indexes 
 CREATE INDEX idx_cust_id ON customer(cust_id);
