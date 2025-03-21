@@ -104,17 +104,16 @@ INSERT INTO books_authors (book_id, auth_id) VALUES
 
 ---QUERIES---
 
-CREATE VIEW books_details AS
-SELECT 
-    b.book_id as "Book ID ", 
-    b.book_title as "Book Title", 
-    g.genre_name as "Genre Name", 
-    p.pub_name as "Publisher ", 
-    b.book_pub_year as "Publishing year"
+CREATE VIEW book_details AS
+SELECT
+    b.book_id AS "Book ID",
+    b.book_title AS "Title",
+    g.genre_name AS "Genre",
+    p.pub_name AS "Publisher",
+    b.book_pub_year AS "Publication Year"
 FROM books b
-JOIN books_genres bg ON b.book_id = bg.book_id
-JOIN genres g ON bg.genre_id = g.genre_id
-LEFT JOIN publishers p ON b.pub_id = p.pub_id
+JOIN genres g ON b.genre_id = g.genre_id
+JOIN publishers p ON b.pub_id = p.pub_id
 ORDER BY g.genre_name;
 
 
