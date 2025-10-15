@@ -79,3 +79,13 @@ SELECT CONCAT(staff_name, ' ', staff_last_name ) AS 'Staff Name' FROM staff;
 
 #concatenate with seperator display the data in one cell but seperated with the comma
 SELECT CONCAT_WS(' ', staff_name, staff_last_name ) AS 'Staff Name' FROM staff; 
+
+CREATE ROLE user_name;
+GRANT FUNCTION on DATABASE TO user_name;
+REVOKE SELECT ON databse FROM user_name;
+DROP ROLE user_name;
+
+NOLOGIN --  Not logged in
+GRANT FUNCTION on staff_details TO staff;
+CREATE user john WITH LOGIN PASSWORD 'password';
+GRANT staff TO john;
