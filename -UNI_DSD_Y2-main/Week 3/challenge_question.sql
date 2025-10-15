@@ -6,22 +6,49 @@ FROM country
 WHERE region = 'Southern Europe'
 ORDER BY country_population ASC 
 LIMIT 1;
-
---location italy
-
+--location vatican city
 
 CREATE OR REPLACE IF EXIST VIEW language_spoken AS
-SELECT 
-    cl.country_code AS "Country Code",
-    cl.language AS "Spoken Language"
-FROM country_language cl
-JOIN country c ON c.country_code = cl.country_code
-WHERE c.country_name = 'Holy See (Vatican City State)';
+SELECT language
+FROM countrylanguage
+WHERE country_code = (
+  SELECT country_code FROM country WHERE name = 'Vatican City'
+)
+AND isofficial = TRUE;
+--language spoken in vatican city 
 
-SELECT 
-    country as "Country Name",
-    country_population as "Population Count"
+CREATE OR REPLACE IF EXIST VIEW italian_only AS
+SELECT name
 FROM country
-WHERE 
-ORDER BY country_population ASC 
-LIMIT 1;
+WHERE code IN (
+  SELECT country_code
+  FROM countrylanguage
+  GROUP BY country_code
+  HAVING COUNT(language) = 1
+)
+AND code IN (
+  SELECT country_code FROM countrylanguage WHERE language = 'Italian'
+);
+--location italy
+
+CREATE OR REPLACE IF EXIST VIEW milan AS
+SELECT city_name, country_code
+FROM city
+WHERE city_name ILIKE 'Mila%';
+--location milan
+
+CREATE OR REPLACE IF EXIST VIEW ecuador_capital AS
+SELECT city_name
+FROM city
+WHERE country_code = 'ECU'
+AND city_id = (
+  SELECT capital FROM country WHERE code = 'ECU'
+);
+--location quito
+
+CREATE OR REPLACE IF EXIST VIEW san_marino AS
+SELECT city_name, country_code, population
+FROM city
+WHERE population = 91084;
+--location san marino
+
