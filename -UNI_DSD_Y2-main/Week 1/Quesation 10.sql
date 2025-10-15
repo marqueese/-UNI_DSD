@@ -1,0 +1,2 @@
+--Q10.	Find the names of customers who have bought an artwork priced no more than £200. 
+--List the customer’s name, artwork title and the price. Add the £ sign to the output and order on price from lowest to highest.
