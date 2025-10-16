@@ -36,8 +36,8 @@ SELECT city_name, country_code
 FROM city
 WHERE city_name ILIKE 'Mila%';
 --location milan
-
-CREATE OR REPLACE IF EXIST VIEW ecuador_capital AS
+ecuador_capital
+CREATE OR REPLACE IF EXIST VIEW  AS
 SELECT city_name
 FROM city
 WHERE country_code = 'ECU'

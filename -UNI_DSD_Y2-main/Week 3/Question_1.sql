@@ -17,7 +17,7 @@ CREATE TABLE category (
 
 DROP TABLE IF EXISTS film;
 
-CREATE TABLE film(
+CREATE TABLE film (
     film_id SERIAL PRIMARY KEY,
     actor_id INT,
     language_id INT,
