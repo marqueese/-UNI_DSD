@@ -41,6 +41,17 @@ JOIN OrderDetails od ON o.order_id = od.order_id
 JOIN Products p ON od.product_id = p.product_id
 WHERE c.city = 'London' AND p.category = 'Electronics';
 
-            π c.customer_name, p.product_name, o.order_date, od.quantity
-                                        ¦
-                                        ¦
+π c.customer_name, p.product_name, o.order_date, od.quantity
+                            ¦
+                od.product_id = p.product_id
+                            ¦
+                    /                   \
+    ⋈ o.order_id = od.order_id      σ p.category = 'Electronics'
+                ¦                                  ¦
+    ⋈ c.customer_id = o.customer_id            Products
+               ¦              \ 
+    σ c.city = 'London'        Orders
+            ¦                      ¦
+        Customers                 OrderDetails
+
+
