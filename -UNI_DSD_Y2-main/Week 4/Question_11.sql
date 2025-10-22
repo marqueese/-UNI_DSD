@@ -1,0 +1,2 @@
+--Q11. Which SQL operation typically forms the root of a query tree?
+--anything included in the select statement

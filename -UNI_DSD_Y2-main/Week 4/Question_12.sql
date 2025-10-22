@@ -1,0 +1,2 @@
+--Q12. Which of the following best describes a physical operator in a query tree?
+--a real execution performed by the database when they join 

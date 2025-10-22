@@ -1,0 +1,2 @@
+--Q10. In a query tree, what do the leaf nodes represent?
+--the leaf nodes are the tables as a whole
