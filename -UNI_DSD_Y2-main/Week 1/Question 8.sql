@@ -6,4 +6,3 @@ JOIN creates c ON a.artist_id = c.artist_id
 JOIN artwork aw ON c.artwork_id = aw.artwork_id
 WHERE work_title = 'Rainbow';
 
-SELECT * FROM artwork;
