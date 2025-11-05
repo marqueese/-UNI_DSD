@@ -8,47 +8,91 @@ ORDER BY country_population ASC
 LIMIT 1;
 --location vatican city
 
-CREATE OR REPLACE IF EXIST VIEW language_spoken AS
-SELECT language
-FROM countrylanguage
-WHERE country_code = (
-  SELECT country_code FROM country WHERE name = 'Vatican City'
-)
-AND isofficial = TRUE;
+SELECT cl.language
+FROM country_language cl
+JOIN country c ON cl.country_code = c.country_code
+WHERE c.region = 'Southern Europe'
+ORDER BY c.country_population
+LIMIT 1;
 --language spoken in vatican city 
 
-CREATE OR REPLACE IF EXIST VIEW italian_only AS
-SELECT name
-FROM country
-WHERE code IN (
-  SELECT country_code
-  FROM countrylanguage
-  GROUP BY country_code
-  HAVING COUNT(language) = 1
+SELECT c.country_name
+FROM country c
+JOIN country_language cl ON c.country_code = cl.country_code
+WHERE cl.language = (
+    SELECT cl.language
+    FROM country_language cl
+    JOIN country c ON cl.country_code = c.country_code
+    WHERE c.region = 'Southern Europe'
+    ORDER BY c.country_population
+    LIMIT 1
 )
-AND code IN (
-  SELECT country_code FROM countrylanguage WHERE language = 'Italian'
-);
---location italy
+GROUP BY c.country_name
+HAVING COUNT(*) = 1;
+--location san marino 
 
-CREATE OR REPLACE IF EXIST VIEW milan AS
-SELECT city_name, country_code
-FROM city
-WHERE city_name ILIKE 'Mila%';
---location milan
-ecuador_capital
-CREATE OR REPLACE IF EXIST VIEW  AS
 SELECT city_name
 FROM city
-WHERE country_code = 'ECU'
-AND city_id = (
-  SELECT capital FROM country WHERE code = 'ECU'
+WHERE country_code = (
+    SELECT c.country_code
+    FROM country c
+    JOIN country_language cl ON c.country_code = cl.country_code
+    GROUP BY c.country_code
+    HAVING COUNT(*) = 1
+)
+AND city_name <> (
+    SELECT country_name
+    FROM country
+    WHERE country_code = (
+        SELECT c.country_code
+        FROM country c
+        JOIN country_language cl ON c.country_code = cl.country_code
+        GROUP BY c.country_code
+        HAVING COUNT(*) = 1
+    )
 );
---location quito
+--serravalle
+    
+SELECT city_name, country_code
+FROM city
+WHERE continent = 'South America'
+AND city_name LIKE (
+    SELECT LEFT(city_name, 4) || '%'
+    FROM city
+    WHERE country_code = (
+        SELECT c.country_code
+        FROM country c
+        JOIN country_language cl ON c.country_code = cl.country_code
+        GROUP BY c.country_code
+        HAVING COUNT(*) = 1
+    )
+)
+AND city_name NOT LIKE (
+    SELECT city_name
+    FROM city
+    WHERE country_code = (
+        SELECT c.country_code
+        FROM country c
+        JOIN country_language cl ON c.country_code = cl.country_code
+        GROUP BY c.country_code
+        HAVING COUNT(*) = 1
+    )
+);
+--location serrana 
+
+SELECT capital
+FROM country
+WHERE country_code = (
+    SELECT country_code
+    FROM city
+    WHERE city_name = 'Serrana'
+);
+--brasillia
 
 CREATE OR REPLACE IF EXIST VIEW san_marino AS
 SELECT city_name, country_code, population
 FROM city
 WHERE population = 91084;
---location san marino
+--location santa monica 
+
 
