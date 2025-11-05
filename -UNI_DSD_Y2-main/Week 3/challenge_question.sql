@@ -1,4 +1,3 @@
-CREATE OR REPLACE IF EXIST VIEW lowest_pop AS
 SELECT 
     country as "Country Name",
     country_population as "Population Count"
@@ -85,14 +84,14 @@ FROM country
 WHERE country_code = (
     SELECT country_code
     FROM city
-    WHERE city_name = 'Serrana'
+    WHERE city_name = 'Serravalle'
 );
 --brasillia
 
-CREATE OR REPLACE IF EXIST VIEW san_marino AS
 SELECT city_name, country_code, population
 FROM city
 WHERE population = 91084;
 --location santa monica 
+
 
 
