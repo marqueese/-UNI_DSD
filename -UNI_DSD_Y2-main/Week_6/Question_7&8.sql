@@ -1,9 +1,6 @@
 --Q7.	Using a subquery list all cities from the United Kingdom along with the city ID.
 --As an extension of the previous query, list the cities from the United Kingdom and France using the IN operator, this time showing the country name as well. Group them by country.
 SELECT
-    CONCAT(c.first_name, ' ', c.last_name) AS "Customer",
-    CONCAT(c.email, ' | ', a.phone) AS "Contact Details",
-    a.address AS "Customer Address",
     ci.city AS "Customer City",
     co.country AS "Customer Country"
 FROM customer c
