@@ -79,3 +79,15 @@ JOIN movie_category mc ON c.category_id = mc.category_id
 JOIN movie m ON mc.movie_id = m.movie_id
 GROUP BY c.name
 ORDER BY "Average Movie Length" DESC;
+
+--Q10.	We know that the average length of all movies is 115.27. Which categories have movies above average? Do not use LIMIT but select only categories that are above the average in descending order and rounded to nearest two decimal places.
+
+SELECT 
+    c.name AS "Category", 
+    ROUND(AVG(m.length), 2) AS "Average Movie Length"
+FROM category c
+JOIN movie_category mc ON c.category_id = mc.category_id
+JOIN movie m ON mc.movie_id = m.movie_id
+GROUP BY c.name
+HAVING AVG(m.length) > 115.27
+ORDER BY "Average Movie Length" DESC;
