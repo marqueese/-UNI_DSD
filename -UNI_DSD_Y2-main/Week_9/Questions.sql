@@ -75,7 +75,7 @@ SELECT
     c.name AS "Category", 
     ROUND(AVG(m.length), 2) AS "Average Movie Length"
 FROM category c
-JOIN film_category fc ON c.category_id = fc.category_id
-JOIN movie m ON fc.movie_id = m.movie_id
+JOIN movie_category mc ON c.category_id = mc.category_id
+JOIN movie m ON mc.movie_id = m.movie_id
 GROUP BY c.name
 ORDER BY "Average Movie Length" DESC;
