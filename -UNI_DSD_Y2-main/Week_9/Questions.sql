@@ -69,12 +69,13 @@ GROUP BY m.title
 ORDER BY "Number of Copies" DESC, m.title ASC;
 
 
---Q9.	 Find the total number of rentals for each month in the year 2005. The output must be exactly as below. Column naming, text formatting, number of rentals starting from the month with most rentals until the ones with less rentals.
+--Q9.	What is the average movie length per category? Round it to the nearest two decimal places  in descending order as  below.
 
 SELECT 
-    TO_CHAR(rental_date, 'Month') AS "Month", 
-    COUNT(rental_id) AS "Total Rentals"
-FROM rental
-WHERE EXTRACT(YEAR FROM rental_date) = 2005
-GROUP BY TO_CHAR(rental_date, 'Month'), EXTRACT(MONTH FROM rental_date)
-ORDER BY "Total Rentals" DESC, EXTRACT(MONTH FROM rental_date);
+    c.name AS "Category", 
+    ROUND(AVG(m.length), 2) AS "Average Movie Length"
+FROM category c
+JOIN film_category fc ON c.category_id = fc.category_id
+JOIN movie m ON fc.movie_id = m.movie_id
+GROUP BY c.name
+ORDER BY "Average Movie Length" DESC;
